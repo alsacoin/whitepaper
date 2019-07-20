@@ -1,0 +1,55 @@
+\documentclass[a4paper,10pt]{article}
+
+\usepackage[utf8]{inputenc}
+
+\usepackage{csquotes}
+\usepackage{fontspec}
+\usepackage{polyglossia}
+\setmainlanguage{english}
+\setotherlanguages{arabic}
+
+\setmainfont{Raleway}
+\newfontfamily\headingfont[]{Cutive Mono}
+\newfontfamily\arabicfont[Script=Arabic]{Noto Naskh Arabic}
+
+\usepackage[backend=bibtex,
+style=numeric,
+bibencoding=ascii
+%style=alphabetic
+%style=reading
+]{biblatex}
+\addbibresource{bib.bib}
+
+\title{Alsacoin: A Scalable Confidential Cryptocurrency}
+\author{Christian Nyumbayire}
+
+\begin{document}
+
+\maketitle
+
+Blockchain cryptocurrencies \cite{1, 2, 3, 4} have guaranteed since their inception a level of safety, certainty and rapidity to financial transactions never reached before by traditional services based on trust and semi-manual accounting. In the years, blockchain technology has found application even outside finance as a tool to certify data and execute programmable contracts \cite{5}. There has been some progress since its invention in 2008 \cite{3}, but we find that there are still some ill-solved problems:
+privacy and scalability.\\\\
+
+The problem of privacy is complex: on one side we want to ensure that users don’t have to reveal information about their business to anyone able to access the system records, on the other side we want to keep them accountable. So we want confidentiality about transactions but pseudonymity for identity. On the implementation side, we also want to not have to rely on untested or poorly tested assumptions. So we have to use only lightweight cryptography based on standard assumptions paying
+attention to not incur in big losses in performance.\\\\
+
+At the moment there are more proposed solutions to blockchain inherent scalability issues, but we are still far from reaching the maximum capacity of 65000 transactions per second guaranteed by Visa Network. We think a good solution, even if partial, should be decentralized, without committees nor nodes with a special status and open to future improvements. It should allow to extend it without having to redesign it, an operation that can be difficult and expensive in long-running protocols.\\\\
+
+Alsacoin is our solution to these problems in the case of simple online payments and data certification (no “smart contracts” \cite{5}). The protocol is simple and open enough to and extended in a second time in different ways without redesigns.\\\\
+
+To solve confidentiality, we found a good candidate in PGC \cite{9}, a cryptographic protocol for pseudonymous confidential transactions that only uses standard cryptography and is agnostic on respect of the consensus protocol used. PGC uses a twisted version of ElGamal \cite{7} for homomorphic encryption, Bulletproofs \cite{8} for zero-knowledge proofs and a scheme for digital public key signatures (we opted for Ed25519 \cite{6}). This is lightweight cryptography based only on the Elliptic Curve Discrete Logarithm Problem.\\\\
+
+For scalability, we used Avalanche \cite{10}, a dagchain (Directed Acyclic Graph) protocol that does not make use of blocks as in blockchains, but operates directly on the graph of transactions, and does not require any kind of mining protocol. Thanks to this protocol we can eliminate two important sources of deadlocks that would make increasing scalability hard: having to work on a single chain and having to increase the consensus latency to wait for mining or for one or more voting committees
+to form \cite{4}. With 2000 nodes, Avalanche guarantees 3400 transactions per second (tps) against Bitcoin 7tps (classic blockchain) and Algorand 874tps (BFT with committees).\\\\
+
+Although we don’t require mining, we opted to keep coin production in the hand of miners. Alsacoin uses a proof-of-work algorithm similar to Hashcash \cite{11}, the same used by Bitcoin, but uses the memory-hard hashing function Balloon \cite{12} in place of SHA256. Mining is “autistic”: it does not take place in the consensus phase and for coin production. This assures us to not degrade Avalanche performance. To keep verification complexity bounded, we require coinbase transactions to take as input one or more outputs owned by the miner from chains of transactions that have as root the dagchain root, the Eve transaction.\\\\
+
+Alsacoin with the prefixes of the International System of Units, e.g.: 10\textsuperscript{-9} ALSA is 1 nALSA, 10\textsuperscript{-6} ALSA is 1 $\mu$ALSA, etc.\\\\
+
+The name of the protocol comes from alsadf (\begin{Arabic}الصدف\end{Arabic}), “shell” in Arab. Shells where one of the first means of exchange used in history \cite{2}.
+
+\medskip
+
+\printbibliography
+
+\end{document}
